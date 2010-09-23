@@ -1,0 +1,20 @@
+<div id="poll_ajax">
+{% block extrahead %}
+    <script type="text/javascript" src="{{ MEDIA_URL }}polls/ajax.js"></script>
+{% endblock %}
+<h2>Poll</h2>
+<h1>{{ poll.title }}</h1>
+{% if already_voted %}
+{% for choice in poll.choice_set.all %}
+    <li>{{ choice.choice }} -- {{ choice.get_vote_count }} vote{{ choice.get_vote_count|pluralize }}</li>
+{% endfor %}
+{% else %}
+{% if form.has_errors %}
+<h2>Please correct the following error{{ form.error_dict|pluralize }}:</h2>
+{% endif %}
+<form method="post" action="/polls/{{ poll.slug }}/" onsubmit="return send_form(this);">
+{{ form.as_ul }}
+<input type="submit" value="Vote" />
+</form>
+{% endif %}
+</div>

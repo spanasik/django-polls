@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Poll {{ poll.title }}{% endblock %}
+{% block breadcrumb %}<li><a href="/polls/">Polls</a></li> <li><a href="/polls/archive/{{ poll.pub_date|date:"Y"|lower }}/">{{ poll.pub_date|date:"Y"|lower }}</a></li> <li><a href="/polls/archive/{{ poll.pub_date|date:"Y"|lower }}/{{ poll.pub_date|date:"M"|lower }}">{{ poll.pub_date|date:"F" }}</a></li> <li class="last">{{ poll.title }}</li>{% endblock %}
+{% block content %}
+<h1>{{ poll.title }}</h1>
+{% if already_voted %}
+{% for choice in choice_tuple %}
+    <li>{{ choice.1 }} -- {{ choice.2 }} vote{{ choice.2|pluralize }}</li>
+{% endfor %}
+{% else %}
+{% if form.has_errors %}
+<h2>Please correct the following error{{ form.error_dict|pluralize }}:</h2>
+{% endif %}
+<form method="post" action=".">
+{{ form.as_ul }}
+<input type="submit" value="Vote" />
+</form>
+{% endif %}
+{% endblock %}
