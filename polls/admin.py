@@ -24,6 +24,7 @@ class VoteAdmin(admin.ModelAdmin):
     list_display = ('poll', 'choice', 'user')
     ordering = ['pub_date']
     search_fields = ['poll']
+    radio_fields = {"choice": admin.VERTICAL}
     fields = (
         (None, {
             'fields': ('poll', 'choice', 'user', 'ip_address')
