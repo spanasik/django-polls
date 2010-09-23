@@ -11,7 +11,7 @@ class Poll(models.Model):
     """
     title = models.CharField(max_length=200, verbose_name=_("Title"))
     description = models.TextField(verbose_name=_("Description"), blank=True, null=True, help_text=_("Not Required"))
-    slug = models.SlugField(prepopulate_from=('title',), unique=True, verbose_name=_("Slug Field"))
+    slug = models.SlugField(unique=True, verbose_name=_("Slug Field"))
     pub_date = models.DateTimeField(auto_now_add=True, verbose_name=_("Date Published"))
     user = models.ForeignKey(User, verbose_name=_("User"))
     state = models.CharField(max_length=1, choices=settings.STATE_CHOICES, default=settings.STATE_DEFAULT, verbose_name=_("State of object"))
@@ -31,28 +31,14 @@ class Poll(models.Model):
         get_latest_by = "pub_date"
         verbose_name = _("Poll")
         verbose_name_plural = _("Polls")
-
-    class Admin:
-        date_hierarchy = 'pub_date'
-        list_display = ('title', 'user')
-        ordering = ['pub_date']
-        search_fields = ['title']
-        fields = (
-            (None, {
-                'fields': ('title', 'description', 'user', 'ip_address')
-            }),
-            (_('Advanced settings'), {
-                'classes': 'collapse',
-                'fields' : ('state', 'slug', 'pub_date')
-            }),
-        )
+       
 
 class Choice(models.Model):
     """
     A choice 
     """
-    poll = models.ForeignKey(Poll, null=False, blank=False, verbose_name=_("Poll"), edit_inline=models.TABULAR, num_in_admin=5)
-    choice = models.CharField(max_length=200, verbose_name=_("Choice"), core=True)
+    poll = models.ForeignKey(Poll, null=False, blank=False, verbose_name=_("Poll"))
+    choice = models.CharField(max_length=200, verbose_name=_("Choice"))
     objects = models.Manager()
 
     def __unicode__(self):
@@ -70,7 +56,7 @@ class Vote(models.Model):
     A vote
     """
     poll = models.ForeignKey(Poll, verbose_name=_("Poll"))
-    choice = models.ForeignKey(Choice, radio_admin=True, verbose_name=_("Choice"))
+    choice = models.ForeignKey(Choice, verbose_name=_("Choice"))
     pub_date = models.DateTimeField(auto_now_add=True, verbose_name=_("Date Published"))
     user = models.ForeignKey(User, verbose_name=_("User"), related_name='polls_vote')
     ip_address = models.IPAddressField(verbose_name=_("Author's IP Address"))
@@ -84,18 +70,3 @@ class Vote(models.Model):
         get_latest_by = "pub_date"
         verbose_name = _("Vote")
         verbose_name_plural = _("Votes")
-
-    class Admin:
-        date_hierarchy = 'pub_date'
-        list_display = ('poll', 'choice', 'user')
-        ordering = ['pub_date']
-        search_fields = ['poll']
-        fields = (
-            (None, {
-                'fields': ('poll', 'choice', 'user', 'ip_address')
-            }),
-            (_('Advanced settings'), {
-                'classes': 'collapse',
-                'fields' : ('pub_date', )
-            }),
-        )
